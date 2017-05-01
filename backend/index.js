@@ -12,7 +12,8 @@ function scrapeSomething(keyword) {
     .then(({items}) => items.map(item => Object.assign({}, item, {name: shop.name})))
   )
 
-  return Promise.all(promises).then(([result]) => result)
+  // flatten array of arrays
+  return Promise.all(promises).then(result => [].concat.apply([], result))
 }
 
 app.get('/search', function (req, res) {
