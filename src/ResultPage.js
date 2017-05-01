@@ -82,28 +82,27 @@ class ResultPage extends Component {
                                price: '1569,00',
                                img: 'http://ultra.by/media/catalog/product/cache/1/small_image/218x170/9df78eab33525d08d6e5fb8d27136e95/1/_/1_6_4_1.jpg',
                                link: 'http://ultra.by/apple-iphone-6-64gb-space-gray-mg4f2rm-a.html' }
-
       ]
     }
   }
   componentDidMount() {
     const { query } = this.props.location.query
-    axios.get('http://localhost:8081/search', query)
-    this.filterResults()
-}
-filterResults () {
-  const { query } = this.props.location.query
-  const { results } = this.state
-  const percent = 0.2
-  const newResults = results.filter((item, i) => (
-    (item.price !== '') && (item.price !== undefined) &&
-    (item.title !=='') && (item.title !== undefined) &&
-    (item.link !== '') && (item.link !== undefined) &&
-    (item.title.toLowerCase().includes(query.toLowerCase()))
-  ))
-  const priceArray = newResults.map((item) => item = parseFloat(item.price))
-  const totalPrice = priceArray.reduce(function(a, b) { return a + b })
-  const filteredResults = newResults.filter((item, i) => (
+    axios.get(`http://localhost:8081/search`, {params: {query}})
+    .then(response => this.filterResults(response.data.results))
+  }
+
+  filterResults (results) {
+    const { query } = this.props.location.query
+    const percent = 0.2
+    const newResults = results.filter((item, i) => (
+      (item.price !== '') && (item.price !== undefined) &&
+      (item.title !=='') && (item.title !== undefined) &&
+      (item.link !== '') && (item.link !== undefined) &&
+      (item.title.toLowerCase().includes(query.toLowerCase()))
+    ))
+    const priceArray = newResults.map((item) => item = parseFloat(item.price))
+    const totalPrice = priceArray.reduce(function(a, b) { return a + b })
+    const filteredResults = newResults.filter((item, i) => (
     (parseFloat(item.price) > (totalPrice * percent/newResults.length) ) ))
 
     filteredResults.sort( (a, b) => {
@@ -128,13 +127,14 @@ filterResults () {
               <div className="caption">
                 <h3 style={{ height: '120px' }} >{item.title}</h3>
                   <h3>{item.price} p</h3>
-                <p><a href={item.link} className="btn btn-primary" role="button">В магазин</a> <a href="#" className="btn btn-default" role="button">Cравнить</a></p>
+                <p><a href={item.link} className="btn btn-primary" target="_blank" role="button">В магазин</a> <a href="#" className="btn btn-default" role="button">Cравнить</a></p>
               </div>
             </div>
           </div>
       </div>
     )
   }
+
   render() {
     const { query } = this.props.location.query
     return (
