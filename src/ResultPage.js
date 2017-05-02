@@ -87,7 +87,7 @@ class ResultPage extends Component {
   }
   componentDidMount() {
     const { query } = this.props.location.query
-    axios.get(`http://localhost:8081/search`, {params: {query}})
+    axios.get(`http://simple-shop.tk/search`, {params: {query}})
     .then(response => {
       this.filterResults(response.data.results)
       console.log(response.data.results)
